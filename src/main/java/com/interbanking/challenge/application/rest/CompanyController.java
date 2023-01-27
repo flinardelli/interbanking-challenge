@@ -36,11 +36,11 @@ public class CompanyController {
         return new ResponseEntity<>(companyResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    @ApiOperation(value = "Get all companies", notes = "Returns all companies")
+    @GetMapping("/last-month")
+    @ApiOperation(value = "Get all companies created by last month", notes = "Returns all companies created by last month")
     @ApiResponses({ @ApiResponse(code = HttpServletResponse.SC_OK, message = "OK") })
-    public ResponseEntity<List<CompanyResponse>> getAll () {
-        var companyEntity = companyService.getAll();
+    public ResponseEntity<List<CompanyResponse>> getAllByLastMonth () {
+        var companyEntity = companyService.getAllByLastMonth();
         var companies = companyEntity.stream().map(companyMapper::companyEntityToResponse).collect(Collectors.toList());
         return new ResponseEntity<>(companies, HttpStatus.OK);
     }

@@ -5,9 +5,11 @@ import com.interbanking.challenge.domain.entity.CompanyEntity;
 import com.interbanking.challenge.domain.repository.CompanyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,5 +40,38 @@ class CompanyServiceTest {
         assertNotNull(companyEntityResponse.getId());
         assertEquals(companyEntity.getCuit(), companyEntityResponse.getCuit());
         assertEquals(companyEntity.getBusinessName(), companyEntityResponse.getBusinessName());
+    }
+    @Test
+    void getAllByLastMonth() {
+        var companyEntity1 = CompanyEntity.builder()
+                .id(UUID.randomUUID())
+                .businessName("Interbanking")
+                .cuit("300035523")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        var companyEntity2 = CompanyEntity.builder()
+                .id(UUID.randomUUID())
+                .businessName("Santander")
+                .cuit("300035523")
+                .createdAt(LocalDateTime.now().minusMonths(1))
+                .build();
+
+        var companyEntity3 = CompanyEntity.builder()
+                .id(UUID.randomUUID())
+                .businessName("Banco Naci{on")
+                .cuit("300035523")
+                .createdAt(LocalDateTime.now().minusMonths(3))
+                .build();
+
+        List<CompanyEntity> companies = new ArrayList<>();
+        companies.add(companyEntity1);
+        companies.add(companyEntity2);
+
+        Mockito.when(companyRepository.findAllByCreatedAtGreaterThanEqual(Mockito.any())).thenReturn(companies);
+        var companyEntities = companyService.getAllByLastMonth();
+
+        assertNotNull(companyEntities);
+        assertEquals(2, companyEntities.size());
     }
 }
