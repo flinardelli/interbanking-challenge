@@ -2,6 +2,7 @@ package com.interbanking.challenge.application.rest;
 
 import com.interbanking.challenge.application.request.CompanyRequest;
 import com.interbanking.challenge.application.response.CompanyResponse;
+import com.interbanking.challenge.application.response.CompanyTransferenceResponse;
 import com.interbanking.challenge.application.rest.mapper.CompanyMapper;
 import com.interbanking.challenge.domain.service.CompanyService;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +43,15 @@ public class CompanyController {
     public ResponseEntity<List<CompanyResponse>> getAllByLastMonth () {
         var companyEntity = companyService.getAllByLastMonth();
         var companies = companyEntity.stream().map(companyMapper::companyEntityToResponse).collect(Collectors.toList());
+        return new ResponseEntity<>(companies, HttpStatus.OK);
+    }
+
+    @GetMapping("/transferences/last-month")
+    @ApiOperation(value = "Get all companies that made transfers in the last month", notes = "Returns all companies that made transfers in the last month")
+    @ApiResponses({ @ApiResponse(code = HttpServletResponse.SC_OK, message = "OK") })
+    public ResponseEntity<List<CompanyTransferenceResponse>> getAllByTransferenceLastMonth () {
+        var companyEntity = companyService.getAllByTransferenceLastMonth();
+        var companies = companyEntity.stream().map(companyMapper::companyEntityAndTransferenceEntityToResponse).collect(Collectors.toList());
         return new ResponseEntity<>(companies, HttpStatus.OK);
     }
 }
