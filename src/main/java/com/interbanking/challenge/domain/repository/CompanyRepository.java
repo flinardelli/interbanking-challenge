@@ -1,12 +1,13 @@
 package com.interbanking.challenge.domain.repository;
 
 import com.interbanking.challenge.domain.entity.CompanyEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
-public interface CompanyRepository extends JpaRepository<CompanyEntity, UUID> {
-    List<CompanyEntity> findAllByCreatedAtGreaterThanEqual(LocalDateTime lastMonth);
+public interface CompanyRepository extends CrudRepository<CompanyEntity, UUID> {
+    Set<CompanyEntity> findAllByCreatedAtGreaterThanEqual(LocalDateTime lastMonth);
+    Set<CompanyEntity> findAllByTransferencesCreatedAtGreaterThanEqual(LocalDateTime lastMonth);
 }
