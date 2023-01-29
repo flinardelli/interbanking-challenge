@@ -42,7 +42,7 @@ class CompanyServiceTest {
     }
 
     @Test
-    void create() {
+    void create_returnOk() {
         companyEntity1.setCreatedAt(null);
         Mockito.when(companyRepository.save(Mockito.any())).thenReturn(companyEntity1);
         var companyEntityResponse = companyService.create(companyEntity1);
@@ -53,7 +53,7 @@ class CompanyServiceTest {
         assertEquals(companyEntity1.getBusinessName(), companyEntityResponse.getBusinessName());
     }
     @Test
-    void getAllByLastMonth() {
+    void getAllByLastMonth_returnOk() {
         Set<CompanyEntity> companies = new HashSet<>();
         companies.add(companyEntity1);
         companies.add(companyEntity2);
@@ -66,13 +66,13 @@ class CompanyServiceTest {
     }
 
     @Test
-    void getAllByTransferenceLastMonth() {
+    void getAllByTransferenceLastMonth_returnOk() {
         var transference1 = TransferenceEntity.builder()
                 .id(UUID.randomUUID())
                 .amount(215050.8f)
                 .creditAccount(3000225)
                 .debitAccount(null)
-                .createdAt(LocalDateTime.now().minusMonths(2))
+                .createdAt(LocalDateTime.now().minusMonths(1))
                 .build();
 
         var transference2 = TransferenceEntity.builder()
@@ -93,8 +93,16 @@ class CompanyServiceTest {
         companies.add(companyEntity2);
 
         Mockito.when(companyRepository.findAllByTransferencesCreatedAtGreaterThanEqual(Mockito.any())).thenReturn(companies);
-        var companyEntities = companyService.getAllByLastMonth();
+        var companiesEntities = companyService.getAllByTransferenceLastMonth();
+        Set<TransferenceEntity> transferencesEntities = new HashSet<>();
+        companiesEntities.forEach(company -> {
+            if(company.getTransferences() != null) {
+                transferencesEntities.addAll(company.getTransferences());
+            }
+        });
 
-        assertNotNull(companyEntities);
+        assertNotNull(companiesEntities);
+        assertNotNull(transferencesEntities);
+        assertEquals(2, transferencesEntities.size());
     }
 }
